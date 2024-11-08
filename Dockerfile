@@ -1,6 +1,6 @@
 # Use a minimal Python 3.10 image
 FROM python:3.10-slim
-
+ENV HF_API_TOKEN=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
 # Set working directory
 WORKDIR /opt/app
 
