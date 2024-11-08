@@ -2,11 +2,16 @@ import gradio as gr
 import requests
 import os
 from transformers import pipeline
+from prometheus_client import start_http_server, Counter, Summary
+
+# Prometheus metrics
+REQUEST_COUNTER = Counter('app_requests_total', 'Total number of requests')
+SUCCESSFUL_REQUESTS = Counter('app_successful_requests_total', 'Total number of successful requests')
+FAILED_REQUESTS = Counter('app_failed_requests_total', 'Total number of failed requests')
+REQUEST_DURATION = Summary('app_request_duration_seconds', 'Time spent processing request')
 
 # Hugging Face API URL
 API_URL = "https://api-inference.huggingface.co/models/google-t5/t5-base"
-
-print('hi')
 
 # Get the token from environment variable
 API_TOKEN = os.getenv("HF_API_TOKEN")
