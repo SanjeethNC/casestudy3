@@ -109,6 +109,9 @@ def run_tests(model_type):
 
 # Guard to prevent the Gradio app from running during imports (like testing)
 if __name__ == "__main__":
+    # Start Prometheus metrics server on port 8000
+    start_http_server(8000)
+
     # Create Gradio interface
     with gr.Blocks() as iface:
         gr.Markdown("# Translation using T5-base (API or Local)")
