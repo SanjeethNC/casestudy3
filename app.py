@@ -2,13 +2,32 @@ import gradio as gr
 import requests
 import os
 from transformers import pipeline
-from prometheus_client import start_http_server, Counter, Summary
+from prometheus_client import start_http_server, Counter, Summary, Gauge
 
-# Prometheus metrics
 REQUEST_COUNTER = Counter('app_requests_total', 'Total number of requests')
 SUCCESSFUL_REQUESTS = Counter('app_successful_requests_total', 'Total number of successful requests')
 FAILED_REQUESTS = Counter('app_failed_requests_total', 'Total number of failed requests')
 REQUEST_DURATION = Summary('app_request_duration_seconds', 'Time spent processing request')
+MEMORY_USAGE = Gauge('app_memory_usage_bytes', 'Memory usage of the application in bytes')
+STATUS_CODES = Counter('app_status_codes', 'HTTP status codes returned by the application', ['status_code'])
+ACTIVE_USERS = Gauge('app_active_users', 'Number of active users or sessions')
+
+# Functions to manage active users count
+def user_session_start():
+    ACTIVE_USERS.inc()
+
+def user_session_end():
+    ACTIVE_USERS.dec()
+
+# Monitor memory usage periodically
+def update_memory_usage():
+    process = psutil.Process()
+    MEMORY_USAGE.set(process.memory_info().rss)
+
+def start_memory_monitoring():
+    while True:
+        update_memory_usage()
+        time.sleep(5)
 
 # Hugging Face API URL
 API_URL = "https://api-inference.huggingface.co/models/google-t5/t5-base"
